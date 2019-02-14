@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="//threejs.org/build/three.js"></script>
+    <script src="/js/client_world.js"></script>
+    <script src="/js/controls/OrbitControls.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+
+<div id="container"></div>
+
+<script>
+    window.onload = function () {
+        window.socket = io();
+        // слушаем событие обновления позиции
+        socket.on('updatePosition', function (data) {
+            // обновляем позиции игроков
+            updatePlayerPosition(data);
+        });
+
+        // слушаем событие подключения
+        socket.on('connect', function () {
+            // загружаем игру
+            loadWorld();
+            // отправляем запрос на получение игроков
+            socket.emit('requestOldPlayers', {});
+        });
+
+        // слушаем событие о создании собственного персонажа
+        socket.on('createPlayer', function (data) {
+            createPlayer(data);
+        });
+
+        // получаем других игроков
+        socket.on('addOtherPlayer', function (data) {
+            // добавляем игрока
+            addOtherPlayer(data);
+        });
+
+        // слушаем событие удаления
+        socket.on('removeOtherPlayer', function (data) {
+            // удаляем игрока
+            removeOtherPlayer(data);
+        });
+    }
+</script>
+
+</body>
+</html>
